@@ -69,46 +69,40 @@ class Person {
     }
 }
 
-// Create a new instance of the Person class
+
 $person = new Person();
 
-// Set the name and email properties
+
 $person->setName("John Doe");
 $person->setEmail("john.doe@example.com");
 
-// Display the name and email properties
+
 echo "Name: " . $person->getName() . "<br>";
 echo "Email: " . $person->getEmail() . "<br>";
 
 // Task 3: Superglobal Variables in PHP Create a PHP script that retrieves the user's name and email from the HTML form in Task 1 using the $_POST superglobal variable. Create a new instance of the Person class and use the setName() and setEmail() methods to set the name and email properties based on the form data. Use the getName() and getEmail() methods to display the properties on the webpage.
 
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Process Form</title>
-</head>
-<body>
+
 	<?php
-		// Include the Person class
+		
 		include('Person.php');
 
-		// Create a new instance of the Person class
+		
 		$person = new Person();
 
-		// Retrieve the name and email from the HTML form
+		
 		$name = $_POST['name'];
 		$email = $_POST['email'];
 
-		// Set the name and email properties of the Person object
+		
 		$person->setName($name);
 		$person->setEmail($email);
 
-		// Display the name and email properties on the webpage
+		
 		echo "Name: " . $person->getName() . "<br>";
 		echo "Email: " . $person->getEmail() . "<br>";
 	?>
-</body>
-</html>
+
 
 
 ?>
