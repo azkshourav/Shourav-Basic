@@ -1,58 +1,67 @@
+
 <?php
+// No: 1 example of resource 1
+// Uses of echo & print 
 
-class Car {
-    private $make;
-    private $model;
-    private $year;
+// echo "Hello World!\n";
+// echo " My Name is Zubayer\n";
+// print "Kushtia \n";
 
-    public function __construct($make, $model, $year) {
-        $this->make = $make;
-        $this->model = $model;
-        $this->year = $year;
-    }
+// No: 2 example of resource 1
+// Example of Variables 
 
-    public function get_make() {
-        return $this->make;
-    }
+// $x = 10;
+// $y = 15;
+// $z = $x + $y;
+// echo $z;
 
-    public function get_model() {
-        return $this->model;
-    }
+// No: 3 example of  resource 1
+// example of If else 
 
-    public function get_year() {
-        return $this->year;
-    }
+// $marks=33;
 
-    public function set_make($make) {
-        $this->make = $make;
-    }
+// if ($marks <33){
+//     echo "fail";
+ 
+// }
+// else if ($marks>=33 && $marks<50){
+//     echo "D grade";
+//         }
 
-    public function set_model($model) {
-        $this->model = $model;
-    }
+// else if($marks>=50 && $marks<65){
+//     echo " C grade";
+// }
+// else if($marks>=65 && $marks<80) {
 
-    public function set_year($year) {
-        $this->year = $year;
-    }
+//     echo " B grade";
 
-    public function display_info() {
-        echo "Car make: " . $this->make . "<br>";
-        echo "Car model: " . $this->model . "<br>";
-        echo "Car year: " . $this->year . "<br>";
-    }
+// }
+// else if($marks>=80 && $marks<90) {
+//     echo "A grade";
+// }
+// else if($marks>=90 && $marks<100) {
+//     echo " A+ grade";
+// }
+// else {
+//     echo " invalid input";
+// }
+
+// No: 4 example of  resource 1
+// Switch Case example
+
+$num=20;
+switch($num){
+    case 10:
+        echo("number is equals to 10");
+        break;
+        case 20:
+            echo ("number is equal to 20");
+            break;
+            case 30:
+                echo("number is equal to 30");
+                break;
+
 }
 
-// Create a Car object with make, model, and year of a 2015 Toyota Corolla
-$car = new Car("Toyota", "Corolla", 2015);
-
-// Call display_info() method to display the car's information
-$car->display_info();
-
-// Use set_make() and set_model() methods to update the car's make and model to a 2015 Honda Civic
-$car->set_make("Honda");
-$car->set_model("Civic");
-
-// Call display_info() method again to display the updated car information
-$car->display_info();
-
 ?>
+
