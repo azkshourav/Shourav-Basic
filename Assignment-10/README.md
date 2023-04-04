@@ -1,3 +1,6 @@
+Hello,
+I am Ahmmed Zubayer Karim. In this assignment, I create a personal blog using HTML, CSS, and PHP. In myblog I have multiple pages, including a home page, a blog page, and a contact page. Here I follow all the requirements for the blog as mentioned:
+
 Introduction:
 In this report, I will be discussing the design and implementation of my personal blog using HTML, CSS, and PHP. The blog consists of four pages: homepage, blog page, single post page, and contact page. The main objective of this blog is to showcase my writing skills and create an online presence for myself. I faced some challenges during the design and implementation process, but with research and practice, I was able to overcome them.
 
@@ -18,3 +21,5 @@ Ensuring that the website is responsive and looks good on all devices, including
 
 Conclusion:
 Designing and implementing a personal blog using HTML, CSS, and PHP was a challenging but rewarding experience. The blog consists of four pages: homepage, blog page, single post page, and contact page. The homepage includes a featured post section and a navigation menu with links to the other pages on the website. The blog page lists the blog posts with a "Read More" button to view the full post, and the single post page displays the full blog post and includes social sharing buttons. The contact page includes a form that sends an email to the blog owner when submitted. The website is responsive and looks good on all devices.
+
+
