@@ -1,1 +1,53 @@
+Question 1: 
+
+Answer:-
+$name = request()->input('name');
+Question 2: 
+
+Answer:-
+$userAgent = request()->header('User-Agent');
+
+Question 3: 
+Answer:-
+$page = request()->query('page') ?? null;
+
+Question 4: 
+Answer:-
+
+return response()->json([
+    'message' => 'Success',
+    'data' => [
+        'name' => 'John Doe',
+        'age' => 25
+    ]
+]);
+
+Question 5: 
+
+Answer:-
+
+$file = request()->file('avatar');
+$file->move('public/uploads', $file->getClientOriginalName());
+
+Question 6: 
+
+Answer:-
+
+$rememberToken = request()->cookie('remember_token') ?? null;
+
+Question 7: 
+
+Answer:-
+
+Route::post('/submit', function (Request $request) {
+    $email = $request->input('email');
+    return response()->json([
+        'success' => true,
+        'message' => 'Form submitted successfully.'
+    ]);
+});
+
+
+
+
 
