@@ -1,1 +1,374 @@
 
+
+
+############## @@@@@@@  Assignment question  ############## @@@@@@@ 
+
+Instructions:
+
+Complete the following coding tasks independently.
+
+Implement the tasks using Laravel framework and follow best practices.
+
+Submit your solution within the given time frame.
+
+Task 1: Request Validation
+
+Implement request validation for a registration form that contains the following fields: name, email, and password. Validate the following rules:
+
+ 
+
+name: required, string, minimum length 2.
+
+email: required, valid email format.
+
+password: required, string, minimum length 8.
+
+ 
+
+Task 2: Request Redirect
+
+Create a route /home that redirects to /dashboard using a 302 redirect.
+
+ 
+
+Task 3: Global Middleware
+
+Create a global middleware that logs the request method and URL for every incoming request. Log the information to the Laravel log file.
+
+ 
+
+Task 4: Route Middleware
+
+Create a route group for authenticated users only. This group should include routes for /profile and /settings. Apply a middleware called AuthMiddleware to the route group to ensure only authenticated users can access these routes.
+
+ 
+
+Task 5: Controller
+
+Create a controller called ProductController that handles CRUD operations for a resource called Product. Implement the following methods:
+
+ 
+
+index(): Display a list of all products.
+
+create(): Display the form to create a new product.
+
+store(): Store a newly created product.
+
+edit($id): Display the form to edit an existing product.
+
+update($id): Update the specified product.
+
+destroy($id): Delete the specified product.
+
+ 
+
+Task 6: Single Action Controller
+
+Create a single action controller called ContactController that handles a contact form submission. Implement the __invoke() method to process the form submission and send an email to a predefined address with the submitted data.
+
+ 
+
+Task 7: Resource Controller
+
+Create a resource controller called PostController that handles CRUD operations for a resource called Post. Ensure that the controller provides the necessary methods for the resourceful routing conventions in Laravel.
+
+ 
+
+Task 8: Blade Template Engine
+
+Create a Blade view called welcome.blade.php that includes a navigation bar and a section displaying the text "Welcome to Laravel!".
+
+
+
+
+
+
+
+
+
+############## @@@@@@@ The answer is given bellow: @@@@@@@@@@@@@@@@ ##########
+
+
+
+Task 1: Request Validation
+
+To implement request validation for the registration form, you can follow these steps:
+
+1. Create a new validation class using the artisan command:
+```bash
+php artisan make:request RegistrationRequest
+```
+
+2. Open the generated `RegistrationRequest` class (`app/Http/Requests/RegistrationRequest.php`) and modify the `rules` method as follows:
+
+```php
+public function rules()
+{
+    return [
+        'name' => 'required|string|min:2',
+        'email' => 'required|email',
+        'password' => 'required|string|min:8',
+    ];
+}
+```
+
+3. In your registration controller's `store` method, type-hint the `RegistrationRequest` class in the method parameter:
+
+```php
+use App\Http\Requests\RegistrationRequest;
+
+public function store(RegistrationRequest $request)
+{
+    // Validation passed, continue processing the registration
+    // logic here...
+}
+```
+
+The above code will automatically validate the incoming request based on the defined rules. If the validation fails, Laravel will redirect the user back to the form with the appropriate error messages. Otherwise, the request will proceed to the controller's `store` method.
+
+Task 2: Request Redirect
+
+To create a route `/home` that redirects to `/dashboard` using a 302 redirect, follow these steps:
+
+1. Open the `routes/web.php` file and define the route as follows:
+
+```php
+Route::get('/home', function () {
+    return redirect('/dashboard');
+});
+```
+
+This code creates a GET route for `/home` and redirects the user to `/dashboard` using the `redirect` helper function.
+
+Task 3: Global Middleware
+
+To create a global middleware that logs the request method and URL for every incoming request, follow these steps:
+
+1. Create a new middleware class using the artisan command:
+```bash
+php artisan make:middleware LogRequestsMiddleware
+```
+
+2. Open the generated `LogRequestsMiddleware` class (`app/Http/Middleware/LogRequestsMiddleware.php`) and modify the `handle` method as follows:
+
+```php
+public function handle($request, Closure $next)
+{
+    // Log the request method and URL
+    \Log::info('Request: ' . $request->method() . ' ' . $request->url());
+
+    return $next($request);
+}
+```
+
+3. Register the middleware globally by adding it to the `$middleware` property in the `app/Http/Kernel.php` file:
+
+```php
+protected $middleware = [
+    // Other middleware...
+    \App\Http\Middleware\LogRequestsMiddleware::class,
+];
+```
+
+Now, every incoming request will be logged to the Laravel log file.
+
+Task 4: Route Middleware
+
+To create a route group for authenticated users only, with the `/profile` and `/settings` routes protected by the `AuthMiddleware`, follow these steps:
+
+1. Create a new middleware class using the artisan command:
+```bash
+php artisan make:middleware AuthMiddleware
+```
+
+2. Open the generated `AuthMiddleware` class (`app/Http/Middleware/AuthMiddleware.php`) and modify the `handle` method as follows:
+
+```php
+public function handle($request, Closure $next)
+{
+    if (!auth()->check()) {
+        // User is not authenticated, redirect or show unauthorized page
+        return redirect()->route('login');
+    }
+
+    return $next($request);
+}
+```
+
+3. Register the middleware in the `$routeMiddleware` property in the `app/Http/Kernel.php` file:
+
+```php
+protected $routeMiddleware = [
+    // Other middleware...
+    'auth' => \App\Http\Middleware\AuthMiddleware::class,
+];
+```
+
+4. In your `routes/web.php` file, use the `middleware`
+
+ method to apply the `auth` middleware to the route group:
+
+```php
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', function () {
+        // Profile route logic...
+    });
+
+    Route::get('/settings', function () {
+        // Settings route logic...
+    });
+});
+```
+
+Now, the `/profile` and `/settings` routes will only be accessible to authenticated users. If a user tries to access these routes without being authenticated, they will be redirected to the login page.
+
+Task 5: Controller
+
+To create a controller called `ProductController` that handles CRUD operations for the `Product` resource, follow these steps:
+
+1. Create the controller using the artisan command:
+```bash
+php artisan make:controller ProductController --resource
+```
+
+2. Open the generated `ProductController` class (`app/Http/Controllers/ProductController.php`) and implement the required methods:
+
+```php
+public function index()
+{
+    // Retrieve all products from the database
+    $products = Product::all();
+
+    // Return the view with the retrieved products
+    return view('products.index', compact('products'));
+}
+
+public function create()
+{
+    // Return the view for creating a new product
+    return view('products.create');
+}
+
+public function store(Request $request)
+{
+    // Validate the incoming request data
+    $validatedData = $request->validate([
+        'name' => 'required|string|min:2',
+        // Add validation rules for other fields
+    ]);
+
+    // Create a new product using the validated data
+    $product = Product::create($validatedData);
+
+    // Redirect the user to the product's details page or any other desired route
+    return redirect()->route('products.show', $product->id);
+}
+
+public function edit($id)
+{
+    // Retrieve the product from the database based on the given ID
+    $product = Product::findOrFail($id);
+
+    // Return the view for editing the product
+    return view('products.edit', compact('product'));
+}
+
+public function update(Request $request, $id)
+{
+    // Validate the incoming request data
+    $validatedData = $request->validate([
+        'name' => 'required|string|min:2',
+        // Add validation rules for other fields
+    ]);
+
+    // Find the product based on the given ID and update its attributes
+    $product = Product::findOrFail($id);
+    $product->update($validatedData);
+
+    // Redirect the user to the product's details page or any other desired route
+    return redirect()->route('products.show', $product->id);
+}
+
+public function destroy($id)
+{
+    // Find the product based on the given ID and delete it
+    $product = Product::findOrFail($id);
+    $product->delete();
+
+    // Redirect the user to the index page or any other desired route
+    return redirect()->route('products.index');
+}
+```
+
+Make sure to replace `Product` with the actual model class representing your products.
+
+Task 6: Single Action Controller
+
+To create a single action controller called `ContactController` that handles a contact form submission, follow these steps:
+
+1. Create the single action controller using the artisan command:
+```bash
+php artisan make:controller ContactController --invokable
+```
+
+2. Open the generated `ContactController` class (`app/Http/Controllers/ContactController.php`) and implement the `__invoke` method:
+
+```php
+public function __invoke(Request $request)
+{
+    // Process the contact form submission and send an email
+    // using the submitted data
+
+    // Example code to send an email (requires a mail service configuration)
+    \Mail::to('contact@example.com')->send(new ContactFormEmail($request->all()));
+
+    // Redirect
+
+ the user to a thank you page or any other desired route
+    return redirect()->route('contact.thankyou');
+}
+```
+
+The `__invoke` method will be executed when the route associated with the `ContactController` is accessed.
+
+Task 7: Resource Controller
+
+To create a resource controller called `PostController` that handles CRUD operations for the `Post` resource, follow these steps:
+
+1. Create the resource controller using the artisan command:
+```bash
+php artisan make:controller PostController --resource
+```
+
+2. Open the generated `PostController` class (`app/Http/Controllers/PostController.php`) and Laravel will provide the necessary methods for the resourceful routing conventions. You can customize the logic within each method according to your application's requirements.
+
+Task 8: Blade Template Engine
+
+To create a Blade view called `welcome.blade.php` that includes a navigation bar and a section displaying the text "Welcome to Laravel!", follow these steps:
+
+1. Create a new Blade view file `welcome.blade.php` in the `resources/views` directory.
+
+2. Open the `welcome.blade.php` file and add the following code:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to Laravel</title>
+</head>
+<body>
+    <!-- Navigation bar -->
+    <nav>
+        <!-- Add your navigation links here -->
+    </nav>
+
+    <!-- Content section -->
+    <section>
+        <h1>Welcome to Laravel!</h1>
+    </section>
+</body>
+</html>
+```
+
+You can customize the navigation bar and add your desired links and styles. The content section displays the text "Welcome to Laravel!".
