@@ -1,1 +1,592 @@
+___________________________
+Question Task 1:
+
+Create a new migration file to add a new table named "categories" to the database. The table should have the following columns:
+
+ 
+
+id (primary key, auto-increment)
+
+name (string)
+
+created_at (timestamp)
+
+updated_at (timestamp)
+------------------------------------
+Answer Task 1: Answer is given bellow:
+
+To create a new migration file for adding the "categories" table with the specified columns, follow these steps:
+
+1. Open your terminal or command prompt.
+2. Navigate to your project directory.
+3. Run the following command to create a new migration file:
+
+```shell
+php artisan make:migration create_categories_table --create=categories
+```
+
+4. This command will create a new migration file with a name like `20230705120000_create_categories_table.php`. Open this file in a text editor.
+
+5. In the migration file, you need to define the schema for the "categories" table. The `up()` method should contain the schema definition, and the `down()` method should define the rollback logic.
+
+```php
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateCategoriesTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('categories');
+    }
+}
+```
+
+6. Save the migration file.
+
+7. Run the migration to create the "categories" table in the database by executing the following command:
+
+```shell
+php artisan migrate
+```
+
+Now you have a new table named "categories" with the specified columns in your database.
+
+_________________________
+Question Task 2:
+
+
+Create a new model named "Category" associated with the "categories" table. Define the necessary properties and relationships.
+_________________________
+Answer Task 2: The answer is given below:
+--------------------------------------
+
+To create a new model named "Category" associated with the "categories" table, follow these steps:
+
+1. Open your terminal or command prompt.
+
+2. Navigate to your project directory.
+
+3. Run the following command to create a new model file:
+
+```shell
+php artisan make:model Category
+```
+
+4. This command will create a new model file named `Category.php` in the `app` directory. Open this file in a text editor.
+
+5. In the `Category` model, you need to define the necessary properties and relationships. 
+
+```php
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Category extends Model
+{
+    protected $fillable = ['name'];
+
+    // Define the relationship with posts
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+}
+```
+
+In the `Category` model, the `$fillable` property specifies the fields that are mass assignable.
+
+The `posts` method defines a one-to-many relationship with the `Post` model, indicating that a category can have multiple posts.
+
+6. Save the model file.
+
+Now you have a new model named "Category" associated with the "categories" table, along with the defined properties and relationship.
+
+
+-----------------------------------------------------------------
+Task 3:
+
+Write a migration file to add a foreign key constraint to the "posts" table. The foreign key should reference the "categories" table on the "category_id" column.
+
+-----------------------------------------------------------------
+To write a migration file that adds a foreign key constraint to the "posts" table referencing the "categories" table on the "category_id" column, follow these steps:
+
+1. Open your terminal or command prompt.
+
+2. Navigate to your project directory.
+
+3. Run the following command to create a new migration file:
+
+```shell
+php artisan make:migration add_foreign_key_to_posts_table --table=posts
+```
+
+4. This command will create a new migration file with a name like `20230705130000_add_foreign_key_to_posts_table.php`. Open this file in a text editor.
+
+5. In the migration file, you need to define the schema for adding the foreign key constraint.
+
+```php
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class AddForeignKeyToPostsTable extends Migration
+{
+    public function up()
+    {
+        Schema::table('posts', function (Blueprint $table) {
+            $table->unsignedBigInteger('category_id');
+            $table->foreign('category_id')->references('id')->on('categories');
+        });
+    }
+
+    public function down()
+    {
+        Schema::table('posts', function (Blueprint $table) {
+            $table->dropForeign(['category_id']);
+            $table->dropColumn('category_id');
+        });
+    }
+}
+```
+
+6. Save the migration file.
+
+7. Run the migration to add the foreign key constraint to the "posts" table by executing the following command:
+
+```shell
+php artisan migrate
+```
+
+Now the "posts" table has a foreign key constraint referencing the "categories" table on the "category_id" column.
+
+------------------------------------------------------------------------------------------------------------
+Task 4:
+
+Create a relationship between the "Post" and "Category" models. A post belongs to a category, and a category can have multiple posts.
+-------------------------------------------------------------------------------------------------------------
+To create a relationship between the "Post" and "Category" models where a post belongs to a category and a category can have multiple posts, follow these steps:
+
+1. Open the "Post" model file (`app/Post.php`) in a text editor.
+
+2. Inside the "Post" model, define the relationship with the "Category" model using the `belongsTo` and `hasMany` methods:
+
+```php
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Post extends Model
+{
+    // ...
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+}
+```
+
+The `category` method defines a "belongs to" relationship, indicating that a post belongs to a category.
+
+3. Open the "Category" model file (`app/Category.php`) in a text editor.
+
+4. Inside the "Category" model, define the relationship with the "Post" model using the `hasMany` method:
+
+```php
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Category extends Model
+{
+    // ...
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+}
+```
+
+The `posts` method defines a "has many" relationship, indicating that a category can have multiple posts.
+
+5. Save the model files.
+
+Now you have established the relationship between the "Post" and "Category" models.
+
+--------------------------------------------------------------------------------------------------
+Task 5:
+
+Write a query using Eloquent ORM to retrieve all posts along with their associated categories. Make sure to eager load the categories to optimize the query.
+---------------------------------------------------------------------------------------------------
+To retrieve all posts along with their associated categories using Eloquent ORM and eager loading, you can use the `with()` method. Here's an example query:
+
+```php
+$posts = Post::with('category')->get();
+```
+
+In this query, the `with('category')` method is used to eager load the `category` relationship, which retrieves the associated category for each post. The `get()` method is then called to execute the query and retrieve the results.
+
+You can access the posts and their associated categories in the `$posts` variable. For example, to loop through the posts and display their details, you can use the following code:
+
+```php
+@foreach ($posts as $post)
+    <h2>{{ $post->title }}</h2>
+    <p>{{ $post->content }}</p>
+    <p>Category: {{ $post->category->name }}</p>
+@endforeach
+```
+
+In this example, the `@foreach` loop iterates over the `$posts` collection. Inside the loop, the post's title, content, and category name are displayed using the `{{ }}` Blade syntax.
+
+--------------------------------------------------------------------------------------------------------
+Task 6:
+
+Implement a method in the "Post" model to get the total number of posts belonging to a specific category. The method should accept the category ID as a parameter and return the count.
+
+
+---------------------------------------------------------------------------------------------------------
+
+To implement a method in the "Post" model to get the total number of posts belonging to a specific category, you can add the following code to the "Post" model (`app/Post.php`):
+
+```php
+public static function getTotalPostsByCategory($categoryId)
+{
+    return self::where('category_id', $categoryId)->count();
+}
+```
+
+In this method, `getTotalPostsByCategory`, the `where` method is used to filter the posts based on the given category ID. The `count` method is then called to retrieve the count of the filtered posts.
+
+To use this method, you can call it on the "Post" model and pass the category ID as a parameter. Here's an example:
+
+```php
+$category = Category::find($categoryId);
+$totalPosts = Post::getTotalPostsByCategory($category->id);
+```
+
+In this example, the `$category` variable represents the category model instance. You can retrieve the category model using the `find` method or any other appropriate method. Then, you can call the `getTotalPostsByCategory` method on the "Post" model, passing the category ID, to get the total number of posts belonging to that category.
+
+The resulting count will be stored in the `$totalPosts` variable.
+
+
+----------------------------------------------------------------------------------------------------------------
+Task 7:
+
+Create a new route in the web.php file to handle the following URL pattern: "/posts/{id}/delete". Implement the corresponding controller method to delete a post by its ID. Soft delete should be used.
+
+-----------------------------------------------------------------------------------------------------------------
+To create a new route in the `web.php` file to handle the URL pattern "/posts/{id}/delete" and implement the corresponding controller method to delete a post by its ID using soft delete, follow these steps:
+
+1. Open the `web.php` file located in the `routes` directory of your Laravel project.
+
+2. Add the following route definition:
+
+```php
+use App\Http\Controllers\PostController;
+
+Route::delete('/posts/{id}/delete', [PostController::class, 'destroy']);
+```
+
+In this example, the `delete` method is used to define the route with the URL pattern "/posts/{id}/delete". The route is associated with the `destroy` method of the `PostController` class.
+
+3. Create a new controller or open the existing `PostController` file (`app/Http/Controllers/PostController.php`) in a text editor.
+
+4. Add the following `destroy` method to the `PostController` class:
+
+```php
+use App\Models\Post;
+
+public function destroy($id)
+{
+    $post = Post::find($id);
+
+    if ($post) {
+        $post->delete();
+        // Optionally, you can add a success message or redirect to a different page
+    }
+
+    // Optionally, you can add error handling or redirect to a different page
+}
+```
+
+In this method, the `$id` parameter represents the post ID that is passed in the URL. The `find` method is used to retrieve the post model based on the ID. If the post is found, the `delete` method is called to soft delete the post.
+
+You can customize the code within the `destroy` method according to your specific requirements, such as adding success messages, error handling, or redirection.
+
+Make sure to import the `Post` model at the top of the controller file if it hasn't been imported already.
+
+Now, when you visit the URL "/posts/{id}/delete" and perform a DELETE request, it will invoke the `destroy` method in the `PostController`, which will delete the post with the specified ID using soft delete.
+
+
+-------------------------------------------------------------------------------------------------------------
+
+Task 8:
+
+Implement a method in the "Post" model to get all posts that have been soft deleted. The method should return a collection of soft deleted posts.
+
+------------------------------------------------------------------------------------------------------------
+To implement a method in the "Post" model to retrieve all posts that have been soft deleted, you can use the `withTrashed()` method provided by Laravel's Soft Deletes feature. Here's an example implementation:
+
+```php
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Post extends Model
+{
+    use SoftDeletes;
+
+    // ...
+
+    public static function getAllSoftDeletedPosts()
+    {
+        return self::onlyTrashed()->get();
+    }
+}
+```
+
+In this example, the `use SoftDeletes` statement enables the Soft Deletes feature for the "Post" model.
+
+The `getAllSoftDeletedPosts` method uses the `onlyTrashed` method to retrieve only the soft deleted posts. The `get` method is then called to retrieve the results as a collection.
+
+To use this method, you can call it on the "Post" model. Here's an example:
+
+```php
+$softDeletedPosts = Post::getAllSoftDeletedPosts();
+```
+
+In this example, the `$softDeletedPosts` variable will contain a collection of all the soft deleted posts.
+
+You can further customize the method as per your requirements, such as adding additional filters or sorting criteria to the query.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+Task 9:
+
+Write a Blade template to display all posts and their associated categories. Use a loop to iterate over the posts and display their details.
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+To display all posts and their associated categories using a Blade template, you can follow these steps:
+
+1. Create a new Blade template file, for example, `posts.blade.php`, in the `resources/views` directory of your Laravel project.
+
+2. Open the `posts.blade.php` file in a text editor.
+
+3. Use a loop to iterate over the posts and display their details. You can use the `@foreach` directive in Blade to achieve this. Here's an example:
+
+```php
+@foreach ($posts as $post)
+    <h2>{{ $post->title }}</h2>
+    <p>{{ $post->content }}</p>
+    <p>Category: {{ $post->category->name }}</p>
+@endforeach
+```
+
+In this example, the `@foreach` directive iterates over the `$posts` collection, which contains all the posts. Inside the loop, the post's title, content, and the associated category's name are displayed using the `{{ }}` Blade syntax.
+
+4. Save the `posts.blade.php` file.
+
+Now, you can render this Blade template to display all posts and their associated categories. In your controller, pass the posts data to the view and return it. For example:
+
+```php
+use App\Models\Post;
+
+public function index()
+{
+    $posts = Post::with('category')->get();
+    return view('posts', ['posts' => $posts]);
+}
+```
+
+In this example, the `index` method retrieves all the posts along with their associated categories using eager loading. Then, it passes the posts data to the `posts.blade.php` view by returning the view with the data array.
+
+Make sure to customize the controller method and the route according to your application's requirements.
+
+When you access the corresponding route that invokes the `index` method, the Blade template will be rendered, and all the posts with their associated categories will be displayed.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Task 10:
+
+Create a new route in the web.php file to handle the following URL pattern: "/categories/{id}/posts". Implement the corresponding controller method to retrieve all posts belonging to a specific category. The category ID should be passed as a parameter to the method.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+To create a new route in the `web.php` file to handle the URL pattern "/categories/{id}/posts" and implement the corresponding controller method to retrieve all posts belonging to a specific category, follow these steps:
+
+1. Open the `web.php` file located in the `routes` directory of your Laravel project.
+
+2. Add the following route definition:
+
+```php
+use App\Http\Controllers\CategoryController;
+
+Route::get('/categories/{id}/posts', [CategoryController::class, 'showPosts']);
+```
+
+In this example, the `get` method is used to define the route with the URL pattern "/categories/{id}/posts". The route is associated with the `showPosts` method of the `CategoryController` class.
+
+3. Create a new controller or open the existing `CategoryController` file (`app/Http/Controllers/CategoryController.php`) in a text editor.
+
+4. Add the following `showPosts` method to the `CategoryController` class:
+
+```php
+use App\Models\Category;
+
+public function showPosts($id)
+{
+    $category = Category::findOrFail($id);
+    $posts = $category->posts;
+
+    return view('category-posts', compact('category', 'posts'));
+}
+```
+
+In this method, the `$id` parameter represents the category ID that is passed in the URL. The `findOrFail` method is used to retrieve the category model based on the ID. If the category is not found, it will throw an exception.
+
+The retrieved category model's `posts` relationship is accessed to retrieve all the posts belonging to that category.
+
+The method then returns a view named `category-posts` and passes the `category` and `posts` variables to the view using the `compact` function. You can adjust the view name as per your preference.
+
+Make sure to import the `Category` model at the top of the controller file if it hasn't been imported already.
+
+5. Create a corresponding Blade template file, for example, `category-posts.blade.php`, in the `resources/views` directory.
+
+6. Open the `category-posts.blade.php` file in a text editor and customize it according to your needs. For example:
+
+```php
+<h1>{{ $category->name }}</h1>
+
+@foreach ($posts as $post)
+    <h2>{{ $post->title }}</h2>
+    <p>{{ $post->content }}</p>
+@endforeach
+```
+
+In this example, the category name is displayed as the heading (`<h1>` tag), and then a loop (`@foreach`) iterates over the `$posts` collection to display each post's title and content.
+
+7. Save the `CategoryController` and `category-posts.blade.php` files.
+
+Now, when you visit the URL "/categories/{id}/posts", where `{id}` represents the category ID, the `showPosts` method in the `CategoryController` will be invoked. It will retrieve the category and its associated posts, and then render the `category-posts` view, passing the category and posts variables to it. The view will display the category name and the posts belonging to that category.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Task 11:
+
+Implement a method in the "Category" model to get the latest post associated with the category. The method should return the post object.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+To implement a method in the "Category" model to get the latest post associated with the category, you can define a relationship and use it to retrieve the latest post. Here's an example implementation:
+
+```php
+class Category extends Model
+{
+    // ...
+
+    public function latestPost()
+    {
+        return $this->hasOne(Post::class)->latest();
+    }
+}
+```
+
+In this example, the `latestPost` method defines a relationship between the "Category" model and the "Post" model. It uses the `hasOne` method to indicate that a category has one latest post. The `latest()` method is chained to retrieve the latest post based on the `created_at` timestamp.
+
+To use this method, you can call it on a category model instance. Here's an example:
+
+```php
+$category = Category::find($categoryId);
+$latestPost = $category->latestPost;
+```
+
+In this example, the `$category` variable represents a category model instance retrieved using the `find` method or any other appropriate method. The `$latestPost` variable will contain the latest post associated with that category.
+
+You can access the properties and relationships of the `$latestPost` object as needed. For example, to display the title and content of the latest post, you can use:
+
+```php
+<h2>{{ $latestPost->title }}</h2>
+<p>{{ $latestPost->content }}</p>
+```
+
+Make sure to import the `Post` model at the top of the "Category" model file if it hasn't been imported already.
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Task 12:
+
+Write a Blade template to display the latest post for each category. Use a loop to iterate over the categories and display the post details.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+To display the latest post for each category using a Blade template, you can follow these steps:
+
+1. Create a new Blade template file, for example, `latest-posts.blade.php`, in the `resources/views` directory of your Laravel project.
+
+2. Open the `latest-posts.blade.php` file in a text editor.
+
+3. Use a loop to iterate over the categories and display the details of the latest post for each category. You can use the `@foreach` directive in Blade to achieve this. Here's an example:
+
+```php
+@foreach ($categories as $category)
+    <h2>{{ $category->name }}</h2>
+    
+    @if ($category->latestPost)
+        <h3>{{ $category->latestPost->title }}</h3>
+        <p>{{ $category->latestPost->content }}</p>
+    @else
+        <p>No posts available for this category.</p>
+    @endif
+
+@endforeach
+```
+
+In this example, the `@foreach` directive iterates over the `$categories` collection, which contains all the categories. Inside the loop, the category's name is displayed using `{{ $category->name }}`.
+
+The `@if` directive checks if the category has a latest post (`$category->latestPost`). If it does, the title and content of the latest post are displayed using `{{ $category->latestPost->title }}` and `{{ $category->latestPost->content }}`, respectively.
+
+If the category doesn't have a latest post, a message indicating no posts are available for that category is displayed.
+
+4. Save the `latest-posts.blade.php` file.
+
+Now, you can render this Blade template to display the latest post for each category. In your controller, retrieve the categories along with their latest posts and pass the data to the view. For example:
+
+```php
+use App\Models\Category;
+
+public function index()
+{
+    $categories = Category::with('latestPost')->get();
+    return view('latest-posts', ['categories' => $categories]);
+}
+```
+
+In this example, the `index` method retrieves all the categories along with their latest posts using eager loading. Then, it passes the categories data to the `latest-posts.blade.php` view by returning the view with the data array.
+
+Make sure to customize the controller method and the route according to your application's requirements.
+
+When you access the corresponding route that invokes the `index` method, the Blade template will be rendered, and the latest post for each category will be displayed. If no posts are available for a particular category, the respective message will be shown.
+
 
