@@ -1,1 +1,90 @@
 
+Question: Simple Blog Project using Laravel Eloquent ORM & Axios 
+
+ 
+
+Requirements:
+
+
+
+    Blog Post List By 
+
+
+
+    Blog Post Details 
+
+
+
+    Free comments system  
+
+
+
+ 
+
+
+ 
+
+Design and Layout:
+
+Use HTML, CSS, and Bootstrap orTailwind css 
+
+
+
+
+
+
+Answer: The answer is given bellow:- 
+
+To create a simple blog project using Laravel Eloquent ORM and Axios, you can follow the steps below:
+
+1. Set up Laravel project:
+   - Install Laravel by running `composer global require laravel/installer` and then `laravel new blog`.
+   - Navigate to the project directory: `cd blog`.
+   - Start the development server: `php artisan serve`.
+
+2. Create the database:
+   - Open the `.env` file and configure the database connection with your credentials.
+   - Run migrations to create the necessary tables: `php artisan migrate`.
+
+3. Create models and migrations:
+   - Generate a model and migration for the `BlogPost` entity: `php artisan make:model BlogPost -m`.
+   - In the generated migration file (in the `database/migrations` directory), define the table structure for the `blog_posts` table. Add the necessary columns like `title`, `content`, `author`, and a foreign key `user_id` for the author relationship.
+
+4. Define the relationships between models:
+   - Open the `app/Models/BlogPost.php` file and define the relationship with the `User` model. Use the `belongsTo` method to specify that a blog post belongs to a user.
+   - Define the inverse relationship in the `User` model by using the `hasMany` method to specify that a user can have multiple blog posts.
+
+5. Create routes:
+   - Open the `routes/web.php` file and define the necessary routes for blog post listing, blog post details, and comments.
+   - For example, you can define routes like:
+   ```php
+   Route::get('/blog-posts', 'BlogPostController@index')->name('blog-posts.index');
+   Route::get('/blog-posts/{id}', 'BlogPostController@show')->name('blog-posts.show');
+   Route::post('/blog-posts/{id}/comments', 'CommentController@store')->name('comments.store');
+   ```
+
+6. Create controllers:
+   - Generate a controller for the `BlogPost` and `Comment` entities: `php artisan make:controller BlogPostController --resource` and `php artisan make:controller CommentController`.
+   - In the generated controller files (in the `app/Http/Controllers` directory), implement the necessary methods for blog post listing, blog post details, and comment submission.
+   - Use Laravel's Eloquent ORM to retrieve the data from the database and return the appropriate responses.
+
+7. Create views:
+   - Set up the HTML, CSS, and frontend framework (Bootstrap or Tailwind CSS) according to your preference.
+   - Create the necessary views in the `resources/views` directory, such as `blog-posts/index.blade.php` for the blog post listing and `blog-posts/show.blade.php` for the blog post details.
+   - Use Laravel's Blade templating engine to display the retrieved data from the controllers in the views.
+
+8. Implement AJAX requests with Axios:
+   - Include the Axios library in your project by adding it to the `<head>` section of your main layout file (e.g., `resources/views/layouts/app.blade.php`).
+   - Use Axios to make AJAX requests from your frontend code to the appropriate routes defined in the Laravel routes file.
+   - Handle the responses and update the UI dynamically using JavaScript.
+
+9. Add comment functionality:
+   - Create a `Comment` model and migration using the same steps as for the `BlogPost`.
+   - Define the relationship between the `Comment` and `BlogPost` models.
+   - Implement the logic in the `CommentController` to store comments related to a specific blog post.
+
+10. Update the views:
+    - Modify the blog post details view (`blog-posts/show.blade.php`) to display existing comments and include a form to submit new comments.
+    - Use AJAX requests to submit comments without reloading the page.
+
+Remember to test your application as you progress and make adjustments as needed.
